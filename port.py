@@ -8,8 +8,10 @@ with open("./resources/trades/msltrades.csv", 'r') as f:
     trades = []
     reader = csv.reader(f)
     for row in reader:
+        if row[0].startswith("#"):
+            continue
         trade = (
-        datetime.strptime(row[0], '%d-%b-%Y'), row[1], row[3], row[4], row[5], Decimal(row[6]), Decimal(row[14]))
+            datetime.strptime(row[0], '%d-%b-%Y'), row[1], row[3], row[4], row[5], Decimal(row[6]), Decimal(row[14]))
         trades.append(trade)
 
     trades.sort(key=lambda t: t[0])
@@ -41,10 +43,16 @@ with open("./resources/trades/msltrades.csv", 'r') as f:
                     else:
                         print("UNKNOWN SIDE")
         else:
-            position[trade[1]] = {"open_date": trade[0], "open_side": trade[2], "open_value": trade[5],
-                                  "open_charges": trade[6],
-                                  "close_date": datetime.now(), "close_side": "Close OUT", "close_value": 0,
-                                  "close_charges": 0}
+            position[trade[1]] = {
+                "open_date": trade[0],
+                "open_side": trade[2],
+                "open_value": trade[5],
+                "open_charges": trade[6],
+                "close_date": datetime.now(),
+                "close_side": "Close OUT",
+                "close_value": 0,
+                "close_charges": 0
+            }
             pnl = 0
             if trade[2] == "Sell":
                 pnl = trade[5] - trade[6]
